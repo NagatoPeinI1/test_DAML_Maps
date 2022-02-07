@@ -1,0 +1,47 @@
+module Main.Manager.EntityManager where
+
+import Main.DataTypes.Utils
+import Main.BusinessObjects.Entity
+import DA.Optional
+import DA.Next.Map as M
+import DA.List as L
+
+
+template EntityManager
+  with
+    manager: Party
+    details: Text
+  
+  where
+    signatory manager
+
+    nonconsuming choice CreateEntity : Text
+      with
+        _entity: Party
+        _details: Optional Text
+        _role: Text
+        _roleDetails: Map Text Roles
+        _relationship: Text
+        _commodityName: Text
+
+      controller _entity 
+        do
+          debug "Creating Entity."
+          existingEntityCid <- lookupByKey @Entity (_role, _entity)
+          if(isSome existingEntityCid)
+          then do
+              return ("Entity already exists.")
+          else
+              do
+                  debug "Create Entity."
+                  entityId <- create Entity with entity = _entity,
+                                                  details = _details,
+                                                  role = _role,
+                                                  roleDetails = _roleDetails,
+                                                  relationship = _relationship,
+                                                  commodityName = _commodityName
+                                            
+                  return ("Entity created successfully.")
+                  
+
+          

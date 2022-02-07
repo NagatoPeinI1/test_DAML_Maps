@@ -1,0 +1,54 @@
+module Main.DataTypes.Utils where
+
+import DA.Next.Map as M
+import DA.List as L
+
+data Currency = Currency
+  with
+    price: Decimal
+    quantity: Int
+    symbol: Text
+  deriving (Eq, Show)
+
+data ShowroomRole = ShowroomRole
+  with
+    canRequestNewLot: Bool
+    canRejectLot: Bool
+    canSell: Bool
+    canBuy: Bool
+    canImport: Bool
+  deriving (Eq, Show)
+
+data ManufacturerRole = ManufacturerRole
+  with
+    canRequestNewLot: Bool
+    canRejectLot: Bool
+    canSell: Bool
+    canBuy: Bool
+    canImport: Bool
+  deriving (Eq, Show)
+
+data CustomerRoles = CustomerRoles
+  with
+    canBuy: Bool
+    canSell: Bool
+  deriving (Eq, Show)
+
+-- data Roles = Roles
+--   with
+--     manufacturer: ManufacturerRole
+--     showroom: ShowroomRole
+--     issuerRole: CustomerRoles
+--     canReject: Bool
+--     canRePropose: Bool
+--     canAmend: Bool
+--   deriving (Eq, Show)
+
+data Roles = Roles
+  with
+    canRequestNewLot: Bool
+    canRejectLot: Bool
+    canSell: Bool
+    canBuy: Bool
+    canImport: Bool
+  deriving (Eq, Show)

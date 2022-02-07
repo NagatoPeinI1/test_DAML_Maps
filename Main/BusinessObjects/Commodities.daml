@@ -1,0 +1,23 @@
+module Main.BusinessObjects.Commodities where
+
+import Main.DataTypes.Utils
+import DA.Optional
+import DA.Next.Map as M
+import DA.List as L
+
+type CommodityKey = (Text, Party)  --- isin, issuer
+
+template Commodities
+	with
+		commodity: Text
+		details: Text
+		quantity: Decimal
+		cost: Decimal
+		owner: Party
+	
+	where
+		ensure quantity > 0.0 && cost >= 0.0
+		signatory owner
+		observer owner
+		key (commodity, owner) : CommodityKey
+		maintainer key._2

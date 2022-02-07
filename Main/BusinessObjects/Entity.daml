@@ -1,0 +1,57 @@
+module Main.BusinessObjects.Entity where
+
+--- File Imports
+import Main.BusinessObjects.Commodities
+
+--- Functional Imports
+import Main.DataTypes.Utils
+import DA.Optional
+import DA.Next.Map as M
+import DA.List as L
+
+type EntityKey = (Text, Party)  --- isin, issuer
+
+template Entity
+	with
+		entity: Party
+		details: Optional Text
+		role: Text
+		roleDetails: Map Text Roles
+		relationship: Text
+		commodityName: Text
+	
+	where
+		ensure role /= ""
+		signatory entity
+		observer entity
+		key (role, entity) : EntityKey
+		maintainer key._2
+
+		nonconsuming choice CreateCommodity: Text
+			with
+				_commodity: Text
+				_details: Text
+				_quantity: Decimal
+				_cost: Decimal
+				_owner: Party
+
+			controller _owner 
+				do 
+					debug "Creating Commodity."
+					existingCommodityCid <- lookupByKey @Commodities (_commodity, _owner)
+					if(isSome existingCommodityCid)
+					then do
+						return ("Commodity already exists.")
+					else
+						do
+							let roleData = (M.lookup this.role)
+							debug "roleData: " <> roleData
+							debug "Create Entity."
+							entityId <- create Commodities with commodity = _commodity,
+																	details = _details,
+																	quantity = _quantity,
+																	cost = _cost,
+																	owner = _owner
+							return ("Commodity created successfully.")
+				  
+
