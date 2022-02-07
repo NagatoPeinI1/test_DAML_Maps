@@ -18,13 +18,13 @@ template EntityManager
     nonconsuming choice CreateEntity : Text
       with
         _entity: Party
-        _details: Optional Text
+        _details: Text
         _role: Text
         _roleDetails: Map Text Roles
         _relationship: Text
         _commodityName: Text
 
-      controller _entity 
+      controller manager 
         do
           debug "Creating Entity."
           existingEntityCid <- lookupByKey @Entity (_role, _entity)
@@ -33,15 +33,16 @@ template EntityManager
               return ("Entity already exists.")
           else
               do
-                  debug "Create Entity."
-                  entityId <- create Entity with entity = _entity,
-                                                  details = _details,
-                                                  role = _role,
-                                                  roleDetails = _roleDetails,
-                                                  relationship = _relationship,
-                                                  commodityName = _commodityName
-                                            
-                  return ("Entity created successfully.")
+                debug "Create Entity."
+                entityId <- create Entity with entity = _entity,
+                                                details = _details,
+                                                role = _role,
+                                                roleDetails = _roleDetails,
+                                                relationship = _relationship,
+                                                commodityName = _commodityName,
+                                                manager
+                                          
+                return ("Entity created successfully.")
                   
 
           

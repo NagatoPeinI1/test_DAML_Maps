@@ -9,21 +9,22 @@ import DA.Optional
 import DA.Next.Map as M
 import DA.List as L
 
-type EntityKey = (Text, Party)  --- isin, issuer
+type EntityKey = (Text, Party)
 
 template Entity
 	with
 		entity: Party
-		details: Optional Text
+		details: Text
 		role: Text
 		roleDetails: Map Text Roles
 		relationship: Text
 		commodityName: Text
+		manager: Party
 	
 	where
 		ensure role /= ""
-		signatory entity
-		observer entity
+		signatory manager
+		observer entity, manager
 		key (role, entity) : EntityKey
 		maintainer key._2
 
@@ -44,14 +45,23 @@ template Entity
 						return ("Commodity already exists.")
 					else
 						do
-							let roleData = (M.lookup this.role)
-							debug "roleData: " <> roleData
-							debug "Create Entity."
-							entityId <- create Commodities with commodity = _commodity,
-																	details = _details,
-																	quantity = _quantity,
-																	cost = _cost,
-																	owner = _owner
-							return ("Commodity created successfully.")
+							debug "Creating Commodity."
+							let roleData = (M.lookup this.role this.roleDetails)
+							if(isSome roleData)
+							then do 
+								return ("You don't have appropriate role.")
+							else
+								do
+									-- if (roleData.canBuy)
+									-- then do
+										entityId <- create Commodities with commodity = _commodity,
+																				details = _details,
+																				quantity = _quantity,
+																				cost = _cost,
+																				owner = _owner
+										return ("Commodity created successfully.")
+									-- else
+									-- 	do
+									-- 		return ("You are not entitled to create commodity.")
 				  
 

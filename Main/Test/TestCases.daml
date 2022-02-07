@@ -1,0 +1,46 @@
+module Main.Test.TestCases where
+
+--- File Imports
+import Daml.Script
+import Main.BusinessObjects.Commodities
+import Main.BusinessObjects.Entity
+import Main.Manager.EntityManager
+
+--- Functional Imports
+import Main.DataTypes.Utils
+import DA.Optional
+import DA.Next.Map as M
+import DA.List as L
+
+testBond : Script ()
+
+testBond = script 
+  do
+    manager <- allocatePartyWithHint "GOI" (PartyIdHint "GOI")
+    entity <- allocatePartyWithHint "KTM" (PartyIdHint "KTM")
+    owner <- allocatePartyWithHint "BAJAJ" (PartyIdHint "BAJAJ")
+    debug "starting scenarios..."
+    debug "Creating Entity Manager..."
+    createGenesis <- submit manager
+      do
+          createCmd EntityManager with details = "Government of India",
+                                        manager
+    
+    -- trying to create Entity via Entity Manager contract, thus using Entity Manager contract ID
+    createGenisisEntity <- submit manager 
+      do
+        exerciseCmd createGenesis CreateEntity with _entity = entity,
+                                                      _details = "KTM foregin entity having tie up with BAJAJ India",
+                                                      _role = "Manufacturar",
+                                                      _roleDetails = (M.insert "Manufacturar" Roles with {
+                                                                        canRequestNewLot = True,
+                                                                        canRejectLot = True,
+                                                                        canSell = True,
+                                                                        canBuy = True,
+                                                                        canImport = True
+                                                                      })(M.empty),
+                                                      _relationship = "Manufacturar of KTM Bikes",
+                                                      _commodityName = "Bikes"
+
+    return ()
+

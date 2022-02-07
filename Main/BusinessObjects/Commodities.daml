@@ -5,7 +5,7 @@ import DA.Optional
 import DA.Next.Map as M
 import DA.List as L
 
-type CommodityKey = (Text, Party)  --- isin, issuer
+type CommodityKey = (Text, Party)
 
 template Commodities
 	with
