@@ -9,7 +9,7 @@ import DA.Optional
 import DA.Next.Map as M
 import DA.List as L
 
-type EntityKey = (Text, Party)
+type EntityKey = (Text, Party, Party)
 
 template Entity
 	with
@@ -25,10 +25,10 @@ template Entity
 		ensure role /= ""
 		signatory manager
 		observer entity, manager
-		key (role, entity) : EntityKey
+		key (role, manager, entity) : EntityKey
 		maintainer key._2
 
-		nonconsuming choice CreateCommodity: Text
+		nonconsuming choice CreateCommodity: ContractId Commodities
 			with
 				_commodity: Text
 				_details: Text
@@ -38,20 +38,21 @@ template Entity
 
 			controller _owner 
 				do 
-					debug "Creating Commodity."
-					existingCommodityCid <- lookupByKey @Commodities (_commodity, _owner)
-					if(isSome existingCommodityCid)
-					then do
-						return ("Commodity already exists.")
-					else
-						do
-							debug "Creating Commodity."
-							let roleData = (M.lookup this.role this.roleDetails)
-							if(isSome roleData)
-							then do 
-								return ("You don't have appropriate role.")
-							else
-								do
+					-- debug "Creating Commodity."
+					-- existingCommodityCid <- lookupByKey @Commodities (_commodity, _owner)
+					-- if(isSome existingCommodityCid)
+					-- then do
+					-- 	return ("Commodity already exists.")
+					-- else
+					-- 	do
+					-- 		debug "Creating Commodity."
+					-- 		let roleData = (M.lookup this.role this.roleDetails)
+					-- 		if(isSome roleData)
+					-- 		then do 
+					-- 			-- return ("You don't have appropriate role.")
+					-- 			return existingCommodityCid
+					-- 		else
+					-- 			do
 									-- if (roleData.canBuy)
 									-- then do
 										entityId <- create Commodities with commodity = _commodity,
@@ -59,7 +60,8 @@ template Entity
 																				quantity = _quantity,
 																				cost = _cost,
 																				owner = _owner
-										return ("Commodity created successfully.")
+										-- return ("Commodity created successfully.")
+										return entityId
 									-- else
 									-- 	do
 									-- 		return ("You are not entitled to create commodity.")

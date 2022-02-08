@@ -15,7 +15,7 @@ template EntityManager
   where
     signatory manager
 
-    nonconsuming choice CreateEntity : Text
+    nonconsuming choice CreateEntity : ContractId Entity
       with
         _entity: Party
         _details: Text
@@ -23,26 +23,28 @@ template EntityManager
         _roleDetails: Map Text Roles
         _relationship: Text
         _commodityName: Text
+        _manager: Party
 
       controller manager 
         do
-          debug "Creating Entity."
-          existingEntityCid <- lookupByKey @Entity (_role, _entity)
-          if(isSome existingEntityCid)
-          then do
-              return ("Entity already exists.")
-          else
-              do
-                debug "Create Entity."
+          -- debug "Creating Entity."
+          -- existingEntityCid <- lookupByKey @Entity (_role, manager, _entity)
+          -- if(isSome existingEntityCid)
+          -- then do
+          --     return ("Entity already exists.")
+          -- else
+          --     do
+          --       debug "Create Entity."
                 entityId <- create Entity with entity = _entity,
                                                 details = _details,
                                                 role = _role,
                                                 roleDetails = _roleDetails,
                                                 relationship = _relationship,
                                                 commodityName = _commodityName,
-                                                manager
+                                                manager = _manager
                                           
-                return ("Entity created successfully.")
+                -- return ("Entity created successfully.")
+                return entityId
                   
 
           

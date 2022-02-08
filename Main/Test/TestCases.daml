@@ -21,15 +21,15 @@ testBond = script
     owner <- allocatePartyWithHint "BAJAJ" (PartyIdHint "BAJAJ")
     debug "starting scenarios..."
     debug "Creating Entity Manager..."
-    createGenesis <- submit manager
+    genesisCID <- submit manager
       do
           createCmd EntityManager with details = "Government of India",
                                         manager
     
     -- trying to create Entity via Entity Manager contract, thus using Entity Manager contract ID
-    createGenisisEntity <- submit manager 
+    createGenisisEntityCID <- submit manager 
       do
-        exerciseCmd createGenesis CreateEntity with _entity = entity,
+        exerciseCmd genesisCID CreateEntity with _entity = entity,
                                                       _details = "KTM foregin entity having tie up with BAJAJ India",
                                                       _role = "Manufacturar",
                                                       _roleDetails = (M.insert "Manufacturar" Roles with {
@@ -40,7 +40,16 @@ testBond = script
                                                                         canImport = True
                                                                       })(M.empty),
                                                       _relationship = "Manufacturar of KTM Bikes",
-                                                      _commodityName = "Bikes"
+                                                      _commodityName = "Bikes",
+                                                      _manager = manager
+
+    createGenisiCommodityCID <- submit entity
+      do
+        exerciseCmd createGenisisEntityCID CreateCommodity with _commodity = "Bike",
+                                                                  _details = "KTM Duke 390cc",
+                                                                  _quantity = 1.0,
+                                                                  _cost = 2.90,
+                                                                  _owner = entity
 
     return ()
 
