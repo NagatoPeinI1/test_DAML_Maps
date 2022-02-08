@@ -62,5 +62,3 @@ template Entity
 								do
 									debug "You are not entitled to create commodity."
 									return (Left "You are not entitled to create commodity.")
-				  
-
