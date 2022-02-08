@@ -28,7 +28,7 @@ template Entity
 		key (role, manager, entity) : EntityKey
 		maintainer key._2
 
-		nonconsuming choice CreateCommodity: ContractId Commodities
+		nonconsuming choice CreateCommodity: Either  Text (ContractId Commodities)
 			with
 				_commodity: Text
 				_details: Text
@@ -37,33 +37,28 @@ template Entity
 				_owner: Party
 
 			controller _owner 
-				do 
-					-- debug "Creating Commodity."
-					-- existingCommodityCid <- lookupByKey @Commodities (_commodity, _owner)
-					-- if(isSome existingCommodityCid)
-					-- then do
-					-- 	return ("Commodity already exists.")
-					-- else
-					-- 	do
-					-- 		debug "Creating Commodity."
-					-- 		let roleData = (M.lookup this.role this.roleDetails)
-					-- 		if(isSome roleData)
-					-- 		then do 
-					-- 			-- return ("You don't have appropriate role.")
-					-- 			return existingCommodityCid
-					-- 		else
-					-- 			do
-									-- if (roleData.canBuy)
-									-- then do
-										entityId <- create Commodities with commodity = _commodity,
-																				details = _details,
-																				quantity = _quantity,
-																				cost = _cost,
-																				owner = _owner
-										-- return ("Commodity created successfully.")
-										return entityId
-									-- else
-									-- 	do
-									-- 		return ("You are not entitled to create commodity.")
+				do 	
+					debug "Creating Commodity."
+					existingCommodityCid <- lookupByKey @Commodities (_commodity, _owner)
+					if(isSome existingCommodityCid)
+					then do
+						return (Left "Commodity already exists.")
+					else
+						do
+							debug "Creating Commodity."
+							let roleData = fromSome (M.lookup role roleDetails)
+							debug (roleData)
+
+							if (roleData.canRequestNewLot)
+							then do
+									entityId <- create Commodities with commodity = _commodity,
+																			details = _details,
+																			quantity = _quantity,
+																			cost = _cost,
+																			owner = _owner
+									return (Right entityId)
+							else
+								do
+									return (Left "You are not entitled to create commodity.")
 				  
 

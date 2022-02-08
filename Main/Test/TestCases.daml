@@ -51,5 +51,31 @@ testBond = script
                                                                   _cost = 2.90,
                                                                   _owner = entity
 
+
+---- BAJAJ
+    -- trying to create Entity via Entity Manager contract, thus using Entity Manager contract ID
+    createEntityCID <- submit manager 
+      do
+        exerciseCmd genesisCID CreateEntity with _entity = owner,
+                                                      _details = "BAJA leading bike manufacturer in India",
+                                                      _role = "Owner",
+                                                      _roleDetails = (M.insert "Owner" Roles with {
+                                                                        canRequestNewLot = False,
+                                                                        canRejectLot = False,
+                                                                        canSell = False,
+                                                                        canBuy = False,
+                                                                        canImport = False
+                                                                      })(M.empty),
+                                                      _relationship = "Owner of Dominar Bikes",
+                                                      _commodityName = "Bikes",
+                                                      _manager = manager
+
+    createCommodityCID <- submit owner
+      do
+        exerciseCmd createEntityCID CreateCommodity with _commodity = "Bike",
+                                                                  _details = "Dominar 400",
+                                                                  _quantity = 1.0,
+                                                                  _cost = 2.50,
+                                                                  _owner = owner
     return ()
 

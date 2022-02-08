@@ -27,24 +27,14 @@ template EntityManager
 
       controller manager 
         do
-          -- debug "Creating Entity."
-          -- existingEntityCid <- lookupByKey @Entity (_role, manager, _entity)
-          -- if(isSome existingEntityCid)
-          -- then do
-          --     return ("Entity already exists.")
-          -- else
-          --     do
-          --       debug "Create Entity."
-                entityId <- create Entity with entity = _entity,
-                                                details = _details,
-                                                role = _role,
-                                                roleDetails = _roleDetails,
-                                                relationship = _relationship,
-                                                commodityName = _commodityName,
-                                                manager = _manager
-                                          
-                -- return ("Entity created successfully.")
-                return entityId
+          entityId <- create Entity with entity = _entity,
+                                          details = _details,
+                                          role = _role,
+                                          roleDetails = _roleDetails,
+                                          relationship = _relationship,
+                                          commodityName = _commodityName,
+                                          manager = _manager                                          
+          return entityId
                   
 
           
