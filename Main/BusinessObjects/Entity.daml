@@ -45,12 +45,13 @@ template Entity
 						return (Left "Commodity already exists.")
 					else
 						do
-							debug "Creating Commodity."
 							let roleData = fromSome (M.lookup role roleDetails)
 							debug (roleData)
 
+							debug "Checking for Roles."
 							if (roleData.canRequestNewLot)
-							then do
+							then do									
+									debug "Creating Commodity."
 									entityId <- create Commodities with commodity = _commodity,
 																			details = _details,
 																			quantity = _quantity,
@@ -59,6 +60,7 @@ template Entity
 									return (Right entityId)
 							else
 								do
+									debug "You are not entitled to create commodity."
 									return (Left "You are not entitled to create commodity.")
 				  
 
