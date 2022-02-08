@@ -21,11 +21,14 @@ testBond = script
     owner <- allocatePartyWithHint "BAJAJ" (PartyIdHint "BAJAJ")
     debug "starting scenarios..."
     debug "Creating Entity Manager..."
+
+--- Creating System/Regulator
     genesisCID <- submit manager
       do
           createCmd EntityManager with details = "Government of India",
                                         manager
-    
+
+--- KTM   
     -- trying to create Entity via Entity Manager contract, thus using Entity Manager contract ID
     createGenisisEntityCID <- submit manager 
       do
